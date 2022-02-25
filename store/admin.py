@@ -5,10 +5,18 @@ from . import models
 @admin.register(models.Product)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('title','collection','inventory','price')
-    list_editable = ['price']
+    list_editable = ['inventory']
     ordering = ['title','collection']
     search_fields = ['title__istartswith','collection__istartswith']
 
 
 admin.site.register(models.Collection)
+admin.site.register(models.Customer)
+admin.site.register(models.Order)
+admin.site.register(models.OrderItem)
+admin.site.register(models.Shippingddress)
+admin.site.register(models.Cart)
+admin.site.register(models.CartItem)
+
+
 

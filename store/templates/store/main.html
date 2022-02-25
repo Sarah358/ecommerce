@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+<h3>Products</h3>
+<table class="table ">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Collection</th>
+        <th scope="col">Inventory</th>
+        <th scope="col">Price(kes)</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for product in products %} 
+      <tr>
+         
+        <th scope="row">{{product.id}}</th>
+        <td>{{product.title}}</td>
+        <td>{{product.collection}} </td>
+        <td>{{product.inventory}}</td>
+        <td>{{product.price}}</td>
+       
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+
+
+<h3>Customers</h3>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+        {% for customer in customers %} 
+      <tr>
+         
+        <th scope="row">{{customer.id}}</th>
+        <td>{{customer.first_name}}</td>
+        <td>{{customer.last_name}} </td>
+       
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+{% endblock content %}
