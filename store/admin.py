@@ -14,7 +14,7 @@ admin.site.register(models.Collection)
 admin.site.register(models.Customer)
 admin.site.register(models.Order)
 admin.site.register(models.OrderItem)
-admin.site.register(models.Shippingddress)
+admin.site.register(models.Shippingaddress)
 admin.site.register(models.Cart)
 admin.site.register(models.CartItem)
 

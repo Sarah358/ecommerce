@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags%} 
+{% block content %}
+
+<div class="container">
+    <form method="POST" action = "">
+      <h1 class = "text-center
+      ">Reduce Inventory</h1><br>
+      {% csrf_token %} 
+      {{form | crispy}}
+      <input type = "submit" class="btn btn-danger btn" type="button">
+    </form>
+  </div>
+{% endblock content %}

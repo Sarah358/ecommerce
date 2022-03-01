@@ -3,6 +3,7 @@ from ast import Or
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
+from django.forms import ModelForm
 
 
 # Create your models here.
@@ -30,7 +31,16 @@ class Product(models.Model):
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection,on_delete=models.PROTECT)
     image = models.ImageField(null=True,blank = True)
-    
+
+    # exception handling for image url
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+        except:
+            url = ''
+        
+        return url
 
     # changing str rep
     def __str__(self) -> str:
@@ -39,6 +49,13 @@ class Product(models.Model):
     # sort collection
     class Meta:
         ordering = ['id']
+
+
+# update inventory model form 
+class Updateinventory(ModelForm):
+    class Meta:
+        model = Product
+        fields = ['inventory']
 
 
 # customers model
@@ -61,38 +78,52 @@ class Customer(models.Model):
 
 # order
 class Order(models.Model):
-    PAYMENT_STATUS_PENDING = 'P'
-    PAYMENT_STATUS_COMPLETE = 'C'
-    PAYMENT_STATUS_FAILED = 'F'
-
-    PAYMENT_STATUS_CHOICES =[
-        (PAYMENT_STATUS_PENDING,'Pending'),
-        (PAYMENT_STATUS_COMPLETE,'Complete'),
-        (PAYMENT_STATUS_FAILED,'Failed'),
-
-    ]
-    placed_at = models.DateField(auto_now_add=True)
-    payment_status = models.CharField(
-        max_length=1,choices=PAYMENT_STATUS_CHOICES,default=PAYMENT_STATUS_PENDING
+    placed_at = models.DateField(auto_now_add=True,null=True)
+    complete = models.BooleanField(
+        max_length=1,default=False,null=True
     )
-    customer = models.ForeignKey(Customer,on_delete=models.PROTECT)
+    customer = models.ForeignKey(Customer,on_delete=models.PROTECT,null=True,default='sarah')
 
         # changing str rep
     def __str__(self) -> str:
-        return self.id
+        return str(self.id)
+    # get cart total
+    @property
+    def get_cart_total(self):
+        orderitems = self.orderitem_set.all()
+        total = sum([item.get_total for item in orderitems])
+        return total
+    
+    # get cart items
+    @property
+    def get_cart_items(self):
+        orderitems = self.orderitem_set.all()
+        total = sum([item.quantity for item in orderitems])
+        return total
+
+
 
 # orderitem
 class OrderItem(models.Model):
     order = models.ForeignKey(Order,on_delete=models.PROTECT)
     product = models.ForeignKey(Product,on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
-    unit_price = models.DecimalField(max_digits=6,decimal_places=2)
 
          # changing str rep
     def __str__(self) -> str:
-        return self.id
+        return str(self.id)
+    
+    # get total
+    @property
+    def get_total(self):
+        total = self.product.price * self.quantity
+        return total
+    @property
+    def get_total_orderitems(self):
+        orderitems = self.order
 
-class Shippingddress(models.Model):
+
+class Shippingaddress(models.Model):
     address = models.CharField(max_length=255)
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -103,6 +134,8 @@ class Shippingddress(models.Model):
          # changing str rep
     def __str__(self) -> str:
         return self.address
+
+    
 
 class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
