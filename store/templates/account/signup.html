@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block title %}{% trans "Signup" %}{% endblock %}
+{% block breadcrumblist %}
+<li class="active">Register</li>
+{% endblock breadcrumblist%}
+
+{% block content %}
+<div class="page-section mb-60">
+  <div class="container">
+<div class="col-sm-12 col-md-12 col-lg-6 col-xs-12 p-10 mt-2 offset-3">
+<h1>{% trans "Sign Up" %}</h1>
+
+<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+<form class="login-form" id="signup_form" method="post" action="{% url 'account_signup' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <button class="register-button mt-0" type="submit">{% trans "Sign Up" %} &raquo;</button>
+</form>
+</div>
+</div>
+</div>
+
+{% endblock %}

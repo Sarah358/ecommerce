@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.forms import ModelForm
+from django.shortcuts import reverse
 
 
 # Create your models here.
@@ -31,6 +32,8 @@ class Product(models.Model):
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection,on_delete=models.PROTECT)
     image = models.ImageField(null=True,blank = True)
+    slug = models.SlugField()
+
 
     # exception handling for image url
     @property
@@ -45,6 +48,17 @@ class Product(models.Model):
     # changing str rep
     def __str__(self) -> str:
         return self.title
+       
+    def get_absolute_url(self):
+        return reverse("product_details", kwargs={"slug": self.slug})
+    
+    def get_add_to_cart_url(self):
+        return reverse("add-to-cart", kwargs={"slug": self.slug})
+    def get_remove_from_cart_url(self):
+        return reverse("remove-from-cart", kwargs={"slug": self.slug})
+    
+    
+    
     
     # sort collection
     class Meta:
@@ -76,42 +90,21 @@ class Customer(models.Model):
     class Meta:
         ordering = ['first_name','last_name']
 
-# order
-class Order(models.Model):
-    placed_at = models.DateField(auto_now_add=True,null=True)
-    complete = models.BooleanField(
-        max_length=1,default=False,null=True
-    )
-    customer = models.ForeignKey(Customer,on_delete=models.PROTECT,null=True,default='sarah')
-
-        # changing str rep
-    def __str__(self) -> str:
-        return str(self.id)
-    # get cart total
-    @property
-    def get_cart_total(self):
-        orderitems = self.orderitem_set.all()
-        total = sum([item.get_total for item in orderitems])
-        return total
-    
-    # get cart items
-    @property
-    def get_cart_items(self):
-        orderitems = self.orderitem_set.all()
-        total = sum([item.quantity for item in orderitems])
-        return total
 
 
 
 # orderitem
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order,on_delete=models.PROTECT)
+    # order = models.ForeignKey(Order,on_delete=models.PROTECT)
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE,null=True,blank=True)
     product = models.ForeignKey(Product,on_delete=models.PROTECT)
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1)
+    complete = models.BooleanField(max_length=1,default=False,null=True)
+
 
          # changing str rep
     def __str__(self) -> str:
-        return str(self.id)
+        return f"{self.quantity} of {self.product.title}"
     
     # get total
     @property
@@ -121,6 +114,35 @@ class OrderItem(models.Model):
     @property
     def get_total_orderitems(self):
         orderitems = self.order
+
+# order
+class Order(models.Model):
+    placed_at = models.DateField(auto_now_add=True,null=True)
+    complete = models.BooleanField(max_length=1,default=False,null=True)
+    customer = models.ForeignKey(Customer,on_delete=models.PROTECT,null=True,default='sarah')
+    products = models.ManyToManyField(OrderItem)
+
+
+        # changing str rep
+    def __str__(self) -> str:
+        return str(self.id)
+    # get cart total
+    @property
+    def get_cart_total(self):
+        orderitems = self.products.all()
+        total = sum([item.get_total for item in orderitems])
+        return total
+    
+    # get cart items
+    @property
+    def get_cart_items(self):
+        orderitems = self.products.all()
+        total = sum([item.quantity for item in orderitems])
+        return total
+
+
+
+
 
 
 class Shippingaddress(models.Model):

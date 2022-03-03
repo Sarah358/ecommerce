@@ -15,8 +15,8 @@
 <div class="product-details-left">
     <div class="product-details-images slider-navigation-1">
         <div class="lg-image">
-            <a class="popup-img venobox vbox-item" href="{{product.imageURL}}" data-gall="myGallery">
-                <img src="{{product.imageURL}}" alt="product image"  >
+            <a class="popup-img venobox vbox-item" href="{{object.imageURL}}" data-gall="myGallery">
+                <img src="{{object.imageURL}}" alt="product image"  >
             </a>
         </div>
        
@@ -28,8 +28,8 @@
 <div class="col-lg-7 col-md-6">
 <div class="product-details-view-content pt-60">
     <div class="product-info">
-        <h2>{{product.title}}</h2>
-        <span class="product-details-ref">{{product.collection}}</span>
+        <h2>{{object.title}}</h2>
+        <span class="product-details-ref">{{object.collection}}</span>
         <div class="rating-box pt-20">
             <ul class="rating rating-with-review-item">
                 <li><i class="fa fa-star-o"></i></li>
@@ -42,11 +42,11 @@
             </ul>
         </div>
         <div class="price-box pt-20">
-            <span class="new-price new-price-2">{% load humanize %} KES {{product.price|floatformat:0|intcomma}}</span>
+            <span class="new-price new-price-2">{% load humanize %} KES {{object.price|floatformat:0|intcomma}}</span>
         </div>
         <div class="product-desc">
             <p>
-                <span>{{product.description}}</span>
+                <span>{{object.description}}</span>
             </p>
         </div>
         <div class="single-add-to-cart">
@@ -59,7 +59,7 @@
                         <div class="inc qtybutton"><i class="fa fa-angle-up"></i></div>
                     </div>
                 </div>
-                <button data-product={{product.id}} data-action="add" class="add-to-cart update-cart" type="submit"><a href="#">Add to cart</a> </button>
+                <button class="add-to-cart" type="submit"><a href="{{object.get_add_to_cart_url}}">Add to cart</a> </button>
             </form>
         </div>
         <div class="product-additional-info pt-25">

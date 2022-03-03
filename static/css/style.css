@@ -1479,7 +1479,7 @@ textarea:focus {
 /*Header Middle Minicart*/
 .hm-minicart {
 		display: inline-block;
-		position: relative;
+		position: relative;		
 }
 .hm-minicart-icon {
 		border-radius: 2px;
@@ -3860,8 +3860,8 @@ thead {
 	margin-bottom: 30px;
 }
 .login-form {
-  background-color: #ffffff;
-  padding: 30px;
+  background-color: #fff9f9;
+  padding: 40px;
   -webkit-box-shadow: 0px 5px 4px 0px rgba(0, 0, 0, 0.1);
   box-shadow: 0px 5px 4px 0px rgba(0, 0, 0, 0.1); }
   .login-form label {
@@ -3973,6 +3973,7 @@ thead {
 }
 .register-button:hover {
 	background: #fed700;
+	color: #000;
 }
 /*----------------------------------------*/
 /* 	6.6 Li's Shopping Cart

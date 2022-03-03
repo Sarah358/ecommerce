@@ -1,13 +1,18 @@
 from django.urls import path
 from . import views
-from .views import Homeview
+from .views import Homeview,ProductDetailView
 
 urlpatterns = [
     # path('products',views.index, name='home'),
     path('',Homeview.as_view(), name='template'),
-    path('cart',views.cart, name='cart'),
-    path('checkout',views.checkout, name='checkout'),
-    path('update_item/',views.updateItem, name='update_item'),
-    path('<int:product_id>',views.product_details,name='product_details'),
-    path('reduce_inventory/<str:pk>/',views.reduce_inventory,name='reduce_inventory')
+    path('cart/',views.cart, name='cart'),
+    path('add-to-cart/<slug>/',views.add_to_cart, name='add-to-cart'),
+    path('remove-from-cart/<slug>/',views.remove_from_cart, name='remove-from-cart'),
+    path('checkout/',views.checkout, name='checkout'),
+    path('product/<slug>/',ProductDetailView.as_view(),name='product_details'),
+    path('reduce_inventory/<str:pk>/',views.reduce_inventory,name='reduce_inventory'),
+    path('login/',views.login, name='login'),
+    path('register/',views.register, name='register'),
+
+
 ]

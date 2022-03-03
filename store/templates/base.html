@@ -7,6 +7,7 @@
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title> Ecommerce - {% block title %}{% endblock title %}</title>
+      
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Favicon -->
@@ -45,10 +46,10 @@
         <script src="{% static 'js/vendor/modernizr-2.8.3.min.js'%}"></script>
 
         <!-- set user --> 
-        <script type="text/javascript">
+        {% comment %} <script type="text/javascript">
             var user = '{{request.user}}'
 
-        {% comment %} get csrf token {% endcomment %}
+        get csrf token
             function getToken(name) {
                 let cookieValue = null;
                 if (document.cookie && document.cookie !== '') {
@@ -65,7 +66,7 @@
                 return cookieValue;
             }
             const csrftoken = getToken('csrftoken'); 
-        </script>
+        </script> {% endcomment %}
     </head>
     <body>
       <div class="body-wrapper">
@@ -95,7 +96,9 @@
                                             <ul class="ht-setting-list">
                                                 <li><a href="#">My Account</a></li>
                                                 <li><a href="#">Checkout</a></li>
-                                                <li><a href="#">Sign In</a></li>
+                                                <li><a href="{% url 'account_email' %}">Change Email</a></li>
+
+                                                
                                             </ul>
                                         </div>
                                     </li>
@@ -124,6 +127,17 @@
                                         </div>
                                     </li>
                                     <!-- Language Area End Here -->
+                                    {% if request.user.is_authenticated %}
+                                       
+                                <a href="{% url 'account_logout' %}">
+                                    <li class="hm-minicart">
+                                        
+                                            {% comment %} <span class="item-icon"></span> {% endcomment %}
+                                <button class="btn btn-warning btn-md">Logout</button>
+                                        
+                                        {% endif %}
+                                    </li>
+                                </a>
                                 </ul>
                             </div>
                         </div>
@@ -161,26 +175,36 @@
                             <div class="header-middle-right">
                                 <ul class="hm-menu">
                                     <!-- Begin Header Middle Wishlist Area -->
-                                    <li class="hm-wishlist">
-                                        <a href="#">
-                                            <span class="cart-item-count wishlist-item-count">3</span>
-                                            <i class="fa fa-heart-o"></i>
-                                        </a>
-                                    </li>
+                                    
                                     <!-- Header Middle Wishlist Area End Here -->
                                     <!-- Begin Header Mini Cart Area -->
+                                    {% if request.user.is_authenticated %}
+                                    
+                                  
                                     <a href="{% url 'cart' %}">
                                     <li class="hm-minicart">
                                         <a href=" {% url 'cart' %} " class="hm-minicart-icon"style = "background: #d83737;">
                                             <span class="item-icon"></span>
-                                            <span class="cart-item-count wishlist-item-count">{{count}}</span>
-
+                                            <span class="cart-item-count wishlist-item-count">{{order.get_cart_items}}</span>
                                         </a>
-                                        
-                                        <span></span>
-                                
                                     </li>
+                                </a>
+                              
                                     <!-- Header Mini Cart Area End Here -->
+                                     <!-- Begin Header Mini Cart Area -->
+                                     {% else %}
+                                     <li class="hm-minicart"> 
+                                        <a href="{% url 'account_login' %}"> <button class="btn btn-primary btn-lg">Login</button>
+                                         </a>
+                                     </li>
+                                 </a>
+                                 <li class="hm-minicart" > 
+                                    <a href="{% url 'account_signup' %}"> <button class="btn btn-danger btn-lg">Register</button>
+                                     </a>
+                                 </li>
+                             </a>
+                                 {% endif %}
+                                     <!-- Header Mini Cart Area End Here -->
                                 </ul>
                             </div>
                             <!-- Header Middle Right Area End Here -->
@@ -240,9 +264,26 @@
               </div>
               <!-- Li's Breadcrumb Area End Here -->
 
+              <!-- Messages-->
+              <div class="col-md-8 mt-5 offset-2">
+              {% if messages %}  
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} ">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+
+
+              
+
 {% block content %}
 
 {% endblock content %}
+{% block extra_body %}
+{% endblock %}
+
 
  <!-- Begin Footer Area -->
  <div class="footer">
