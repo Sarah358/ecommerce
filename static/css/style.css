@@ -1165,10 +1165,10 @@ textarea:focus {
 .cart-plus-minus .dec.qtybutton:hover, .cart-plus-minus .inc.qtybutton:hover {
   background: #ddd;
 }
-.cart-plus-minus .dec.qtybutton {
+/* .cart-plus-minus .dec.qtybutton {
   bottom: 0;
   right: 0;
-}
+} */
 .cart-plus-minus .inc.qtybutton {
   border-bottom: none;
   top: 0;
