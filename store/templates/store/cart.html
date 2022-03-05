@@ -15,7 +15,10 @@
                 <form action="#">
                     <div class="table-content table-responsive">
                         <table class="table">
-                            <thead>
+                           
+                           
+                              
+                              <thead>
                                 <tr>
                                     <th class="li-product-remove">remove</th>
                                     <th class="li-product-thumbnail">images</th>
@@ -26,29 +29,40 @@
                                 </tr>
                             </thead>
                             <tbody>
-                              {% for item in items %}
                                 <tr>
+                                    {% for item in items %}
                                     <td class="li-product-remove"><a href="{{item.product.get_remove_from_cart_url}}"><i class="fa fa-times"></i></a></td>
                                     <td class="li-product-thumbnail"><a href="{{item.product.get_absolute_url}}"><img src="{{item.product.imageURL}}" alt="Li's Product Image"style="height: 255px; width:255px"></a></td>
                                     <td class="li-product-name"><a href="{{item.product.get_absolute_url}}">{{item.product.title}}</a></td>
                                     
                                     <td class="li-product-price"><span class="amount">{% load humanize %}{{item.product.price|floatformat:0|intcomma}}</span></td>
                                     <td class="quantity">
-                                        <label>Quantity</label>
-                                        <div class="cart-plus-minus">
-                                            <input class="cart-plus-minus-box" value="{{item.quantity}}" type="text">
-                                            <div class="dec qtybutton"><i class="fa fa-angle-down"></i></div>
-                                            <div class="inc qtybutton"><i class="fa fa-angle-up"></i></div>
-                                        </div>
+                                        <a href="{% url 'reduce-cart-quantity' item.product.slug  %}"><i class="fa fa-minus-circle mr-2"></i></a>
+                                        <input class="col-2" value="{{ item.quantity }}" type="text">
+                                        <a href="{% url 'add-to-cart' item.product.slug  %}"><i class="fa fa-plus-circle ml-2"></i></a>
+
+                                       
                                     </td>
                                     <td class="product-subtotal"><span class="amount">KSH {% load humanize %} {{item.get_total|floatformat:0|intcomma}}</span></td>
                                 </tr>
+                                {% empty%}
+                                <tr>
+                                    <td> <h2>No products in the cart </h2> </td>
+                                </tr>
+                                {% comment %} <tr>
+                                   <div class="col-md-2 p-2">
+                                      <a href="{% url 'template' %}"><button class="btn btn-primary btn-lg">Add Items To Cart</button> </a> 
+                                   </div>
+
+                                </tr> {% endcomment %}
                                 {% endfor %}
                                
             
                             </tbody>
+                            
                         </table>
                     </div>
+                    {% if order.get_cart_total %}
                     <div class="row">
                         <div class="col-12">
                             <div class="coupon-all">
@@ -76,6 +90,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </form>
             </div>
         </div>

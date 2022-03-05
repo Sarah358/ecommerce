@@ -1174,6 +1174,19 @@ textarea:focus {
   top: 0;
   right: 0;
 }
+icon-shape {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.icon-sm {
+    width: 2rem;
+    height: 2rem;
+    
+}
 .product-details-thumbs .slick-arrow, 
 .tab-style-right .slick-arrow,
 .tab-style-left .slick-arrow {
@@ -4000,7 +4013,7 @@ thead {
 	font-family: 'Montserrat', sans-serif;
 	color: #414141;
 }
-.table-content table td .cart-plus-minus {
+.table-content table td .cart-plus {
 	float: none;
 	margin: 0 auto;
 }
@@ -5215,7 +5228,7 @@ span.required {
 	display: inline-block;
 	margin-right: 10px;
 }
-.sp-carousel-content .cart-plus-minus {
+.sp-carousel-content .cart-plus {
 	float: unset;
 	display: inline-block;
 }

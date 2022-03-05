@@ -49,7 +49,7 @@ def add_to_cart(request,slug):
             order.products.add(orderitem)
             order.save()
             messages.success(request,f"{product.title} was added to the cart")
-            return redirect("product_details",slug=slug)
+            return redirect("cart")
 
             
     else:
@@ -57,9 +57,9 @@ def add_to_cart(request,slug):
         order = Order.objects.create(customer=customer,complete=False,placed_at = placed_at)
         order.products.add(orderitem)
         order.save()
-        return redirect("product_details",slug=slug)
+        return redirect("cart")
 
-    return redirect("product_details",slug=slug)
+    return redirect("cart",)
 
 # remove products from cart
 def remove_from_cart(request,slug):
@@ -77,12 +77,39 @@ def remove_from_cart(request,slug):
 
         else:
             messages.info(request,f"{product.title} was not in the cart")
-            return redirect("product_details",slug=slug)
+            return redirect("cart")
     else:
         # add message
         messages.info(request,"You do not have an active order")
         return redirect("product_details",slug=slug)
-    return redirect("product_details",slug=slug)
+    return redirect("cart")
+
+# reduce quantity in the cart
+def reduce_cart_quantity(request,slug):
+    product = get_object_or_404(Product,slug=slug)
+    customer = request.user.customer
+    order_qs= Order.objects.filter(customer=customer,complete=False)
+    if order_qs.exists():
+        order = order_qs[0]
+        # check if order item is in order
+        if order.products.filter(product__slug=product.slug).exists():
+            orderitem = OrderItem.objects.filter(product=product,customer=customer,complete=False)[0]
+            if orderitem.quantity > 1:
+                orderitem.quantity -=1 
+                orderitem.save()
+                messages.info(request,f"{product.title} quantity was updated")
+                
+            else:
+                order.products.remove(orderitem)
+                order.save()
+                messages.info(request,f"{product.title} was removed from cart")
+            return redirect("cart")
+
+
+      
+        
+       
+    
 
     
 

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Product details{% endblock title %}
 {% block breadcrumblist %}
 <li class="active">Product Details</li>
@@ -230,25 +231,3 @@
 
 
 
-<div class = "container">
-  <table class="table">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">Category</th>
-        <th scope="col">Name</th>
-        <th scope="col">Quantity</th>
-        <th scope="col">Price(Kes)</th>   
-      </tr>
-    </thead>
-    <tbody>
-      <tr>    
-        <td>{{product.collection}}</td>
-        <td>{{product.title}}</td>
-        <td>{{product.inventory}}</td>
-        <td>Kes {{product.price}}</td>   
-        <td> <a href="{% url 'reduce_inventory' product.id %}" class="btn btn-primary" > Reduce Inventory </a></td>   
-
-      </tr>
-    </tbody>  
-  </table>
-</div>

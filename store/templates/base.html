@@ -1,5 +1,6 @@
 <!doctype html>
 {% load static %}
+{% load cart_template_tags %}
 <html class="no-js" lang="zxx">
     
 <!-- index-231:32-->
@@ -121,8 +122,8 @@
                                         <div class="ht-language-trigger"><span>English</span></div>
                                         <div class="language ht-language">
                                             <ul class="ht-setting-list">
-                                                <li class="active"><a href="#"><img src="images/menu/flag-icon/1.jpg" alt="">English</a></li>
-                                                <li><a href="#"><img src="images/menu/flag-icon/2.jpg" alt="">Français</a></li>
+                                                <li class="active"><a href="#"><img src="/static/images/menu/flag-icon/1.jpg" alt="">English</a></li>
+                                                <li><a href="#"><img src="/static/images/menu/flag-icon/2.jpg" alt="">Français</a></li>
                                             </ul>
                                         </div>
                                     </li>
@@ -154,7 +155,7 @@
                         <div class="col-lg-3">
                             <div class="logo pb-sm-30 pb-xs-30">
                                 <a href="index.html">
-                                    <img src="images/menu/logo/3.png" alt="">
+                                    <img src="/static/images/menu/logo/3.png" alt="">
                                 </a>
                             </div>
                         </div>
@@ -266,14 +267,19 @@
 
               <!-- Messages-->
               <div class="col-md-8 mt-5 offset-2">
-              {% if messages %}  
+                {% if messages %} 
                 {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} ">
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                     {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  {% endfor %}
+                  {% endif %}
+             
             </div>
+          
 
 
               
@@ -297,7 +303,7 @@
                   <div class="col-lg-3 col-md-6 col-sm-6 pb-sm-55 pb-xs-55">
                       <div class="li-shipping-inner-box">
                           <div class="shipping-icon">
-                              <img src="images/shipping-icon/1.png" alt="Shipping Icon">
+                              <img src="/static/images/shipping-icon/1.png" alt="Shipping Icon">
                           </div>
                           <div class="shipping-text">
                               <h2>Free Delivery</h2>
@@ -310,7 +316,7 @@
                   <div class="col-lg-3 col-md-6 col-sm-6 pb-sm-55 pb-xs-55">
                       <div class="li-shipping-inner-box">
                           <div class="shipping-icon">
-                              <img src="images/shipping-icon/2.png" alt="Shipping Icon">
+                              <img src="/static/images/shipping-icon/2.png" alt="Shipping Icon">
                           </div>
                           <div class="shipping-text">
                               <h2>Safe Payment</h2>
@@ -323,7 +329,7 @@
                   <div class="col-lg-3 col-md-6 col-sm-6 pb-xs-30">
                       <div class="li-shipping-inner-box">
                           <div class="shipping-icon">
-                              <img src="images/shipping-icon/3.png" alt="Shipping Icon">
+                              <img src="/static/images/shipping-icon/3.png" alt="Shipping Icon">
                           </div>
                           <div class="shipping-text">
                               <h2>Shop with Confidence</h2>
@@ -336,7 +342,7 @@
                   <div class="col-lg-3 col-md-6 col-sm-6 pb-xs-30">
                       <div class="li-shipping-inner-box">
                           <div class="shipping-icon">
-                              <img src="images/shipping-icon/4.png" alt="Shipping Icon">
+                              <img src="/static/images/shipping-icon/4.png" alt="Shipping Icon">
                           </div>
                           <div class="shipping-text">
                               <h2>24/7 Help Center</h2>
@@ -359,7 +365,7 @@
                   <!-- Begin Footer Logo Area -->
                   <div class="col-lg-4 col-md-6">
                       <div class="footer-logo">
-                          <img src="images/menu/logo/3.png" alt="Footer Logo">
+                          <img src="/static/images/menu/logo/3.png" alt="Footer Logo">
                           <p class="info">
                               We are a team of designers and developers that create high quality HTML Template & Woocommerce, Shopify Theme.
                           </p>
