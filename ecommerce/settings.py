@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-)n5e-tw^ei9jnr7%56fdv_ogaxkzl)^9c*)y3@(+h-gv^bem=^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
 
 # Application definition
@@ -155,3 +155,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # crispy forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+import django_heroku
+django_heroku.settings(locals())
