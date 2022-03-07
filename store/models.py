@@ -1,5 +1,4 @@
-
-from ast import Or
+from django_countries.fields import CountryField
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
@@ -8,6 +7,11 @@ from django.shortcuts import reverse
 
 
 # Create your models here.
+PAYMENT_CHOICES = (
+    ('S', 'Stripe'),
+    ('P', 'Paypal'),
+)
+
 class Collection(models.Model):
     title = models.CharField(max_length=255)
     featured_product = models.ForeignKey('Product',on_delete=models.SET_NULL,null=True,related_name='+',blank=True)
@@ -115,12 +119,29 @@ class OrderItem(models.Model):
     def get_total_orderitems(self):
         orderitems = self.order
 
+class Shippingaddress(models.Model):
+    address = models.CharField(max_length=255)
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    country = CountryField(multiple=False,null=True)
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True)
+    save_info = models.BooleanField(default=False)
+    default = models.BooleanField(default=True)
+    use_default = models.BooleanField(default=False)
+    payment_option = models.CharField(choices=PAYMENT_CHOICES, max_length=2)
+
+         # changing str rep
+    def __str__(self) -> str:
+        return self.address
 # order
 class Order(models.Model):
     placed_at = models.DateField(auto_now_add=True,null=True)
     complete = models.BooleanField(max_length=1,default=False,null=True)
     customer = models.ForeignKey(Customer,on_delete=models.PROTECT,null=True,default='sarah')
     products = models.ManyToManyField(OrderItem)
+    address = models.ForeignKey(Shippingaddress,on_delete=models.SET_NULL,blank=True,null=True)
+
 
 
         # changing str rep
@@ -145,17 +166,7 @@ class Order(models.Model):
 
 
 
-class Shippingaddress(models.Model):
-    address = models.CharField(max_length=255)
-    street = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
-    customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
-    order = models.ForeignKey(Order,on_delete=models.SET_NULL,blank=True,null=True)
-    date_added = models.DateTimeField(auto_now_add=True)
 
-         # changing str rep
-    def __str__(self) -> str:
-        return self.address
 
     
 

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% block title %}Checkout{% endblock title %}
 {% block breadcrumblist %}
 <li><a href="{% url 'cart' %}">Shopping Cart</a></li>
@@ -29,68 +30,61 @@
                 </div>
             </div>
         </div>
+        {% comment %} <form action="" method="POST">
+          {% csrf_token %}
+          {{form|crispy}}
+          <button type="submit" class="btn btn-info">Submit</button>
+        </form>  {% endcomment %}
         <div class="row">
+         
             <div class="col-lg-6 col-12">
-                <form action="#">
+                
+                <form action="#" method="POST">
+          {% csrf_token %}
+
                     <div class="checkbox-form">
-                        <h3>Billing Details</h3>
                         <div class="row">
-                            <div class="col-md-12">
-                            
-                            </div>
-                            <div class="col-md-12">
-                                <div class="checkout-form-list">
-                                    <label>First Name <span class="required">*</span></label>
-                                    <input placeholder="" type="text">
-                                </div>
-                            </div>
+                           
+                        <h3>Shipping Details:</h3>
+
+                           
                             <div class="col-md-12">
                                 <div class="checkout-form-list">
-                                    <label>Last Name <span class="required">*</span></label>
-                                    <input placeholder="" type="text">
+                                    <label>Address <span class="required">*</span></label>
+                                    <input placeholder="Street address" type="text" name="address" id="address">
                                 </div>
                             </div>
                            
                             <div class="col-md-12">
                                 <div class="checkout-form-list">
-                                    <label>Address <span class="required">*</span></label>
-                                    <input placeholder="Street address" type="text">
+                                    <label>Street <span class="required">*</span></label>
+                                    <input type="text" name="street" id="street">
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="checkout-form-list">
-                                    <input placeholder="Apartment, suite, unit etc. (optional)" type="text">
+                                    <label>City <span class="required">*</span></label>
+                                    <input placeholder="" type="text" name="city" id="city">
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="checkout-form-list">
-                                    <label>Town / City <span class="required">*</span></label>
-                                    <input type="text">
+                                    <label>Country <span class="required">*</span></label>
+                                    {{form.country}}
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="checkout-form-list">
-                                    <label>State / County <span class="required">*</span></label>
-                                    <input placeholder="" type="text">
-                                </div>
+                            <div class="col-md-12">
+                              <div class="custom-control custom-radio">
+                                <input id="stripe" value="S" name="payment_option" type="radio" class="custom-control-input">
+                                <label class="custom-control-label" for="stripe">Stripe</label>
+                              </div>
+                              <div class="custom-control custom-radio">
+                                <input id="paypal" value="P" name="payment_option" type="radio" class="custom-control-input">
+                                <label class="custom-control-label" for="paypal">Paypal</label>
+                              </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="checkout-form-list">
-                                    <label>Postcode / Zip <span class="required">*</span></label>
-                                    <input placeholder="" type="text">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="checkout-form-list">
-                                    <label>Email Address <span class="required">*</span></label>
-                                    <input placeholder="" type="email">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="checkout-form-list">
-                                    <label>Phone  <span class="required">*</span></label>
-                                    <input type="text">
-                                </div>
+                            <div class="order-button-payment col-md-6">
+                                <input value="Make payment" type="submit">
                             </div>
                             
                         </div>
@@ -102,7 +96,7 @@
                 <div class="your-order">
                     <h3>Order Summary</h3>
                     <div class="your-order-table table-responsive">
-                        <table class="table">
+                        {% comment %} <table class="table">
                             <thead>
                                 <tr>
                                     <th class="cart-product-name">Product</th>
@@ -132,7 +126,7 @@
                                     <td><strong><span class="amount">{% load humanize %}KSH {{order.get_cart_total|floatformat:0|intcomma}}</span></strong></td>
                                 </tr>
                             </tfoot>
-                        </table>
+                        </table> {% endcomment %}
                     </div>
                     <div class="payment-method">
                         <div class="payment-accordion">
@@ -190,5 +184,6 @@
         </div>
     </div>
 </div>
+
 <!--Checkout Area End-->
 {% endblock content %}

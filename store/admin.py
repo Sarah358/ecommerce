@@ -9,12 +9,21 @@ class CustomerAdmin(admin.ModelAdmin):
     ordering = ['title','collection']
     search_fields = ['title__istartswith','collection__istartswith']
 
+@admin.register(models.Shippingaddress)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = [
+        'address',
+        'street',
+        'city',
+        'default',
+        'country',
+    ]
+
 
 admin.site.register(models.Collection)
 admin.site.register(models.Customer)
 admin.site.register(models.Order)
 admin.site.register(models.OrderItem)
-admin.site.register(models.Shippingaddress)
 admin.site.register(models.Cart)
 admin.site.register(models.CartItem)
 

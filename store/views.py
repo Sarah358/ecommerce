@@ -1,5 +1,6 @@
+from ctypes import addressof
 from pipes import Template
-from django.views.generic import ListView,DetailView,TemplateView
+from django.views.generic import ListView,DetailView,TemplateView,View
 from django.shortcuts import redirect, render ,get_object_or_404
 from .models import *
 from multiprocessing import context
@@ -7,6 +8,7 @@ from django.http import HttpResponse,JsonResponse
 import json
 from django.contrib import messages
 from django.utils import timezone
+from .forms import CheckoutForm
 
 
 
@@ -106,14 +108,6 @@ def reduce_cart_quantity(request,slug):
             return redirect("cart")
 
 
-      
-        
-       
-    
-
-    
-
-
 # cart function
 def cart(request):
     # check if user is authenticated
@@ -131,7 +125,68 @@ def cart(request):
     context = {'items':items,'order':order}
     return render(request,'store/cart.html',context)
 
-# checkout function
+ # checkout class
+class CheckoutView(View):
+    def get(self, *args, **kwargs):
+        customer = self.request.user.customer
+        order = Order.objects.get(customer=customer, complete=False)
+        # address = Address.objects.get(user=self.request.user, default=True)
+        items = order.products.all()
+        form = CheckoutForm()
+        context = {
+            'form': form,
+            'order': order,
+            'items':items,
+            # 'coupon_form': coupon_form,
+            # "DISPLAY_COUPON_FORM": True
+            # 'address': address
+        }
+        return render(self.request, 'store/checkout.html', context)
+
+    def post(self, *args, **kwargs):
+        customer = self.request.user.customer
+        order = Order.objects.get(customer=customer, complete=False)
+        form = CheckoutForm(self.request.POST or None)
+        if form.is_valid():
+            # print(form.cleaned_data)
+            address = form.cleaned_data.get('address')
+            street = form.cleaned_data.get('street')
+            city = form.cleaned_data.get('city')
+            country = form.cleaned_data.get('country')
+            save_info = form.cleaned_data.get('save_info')
+            use_default = form.cleaned_data.get('use_default')
+            payment_option = form.cleaned_data.get('payment_option')
+
+            # create an instance of address model and save info
+            address = Shippingaddress(
+                customer = self.request.user.customer,
+                address = address,
+                street = street,
+                city = city,
+                country = country,
+               
+            )
+            address.save()
+            if save_info:
+                address.default = True
+                address.save()
+                
+            order.address = address
+            order.save()
+            
+
+            
+            return redirect("checkout")
+        else:
+            print('The form is invalid')
+
+
+
+
+    
+
+    
+
 def checkout(request):
       # check if user is authenticated
     if request.user.is_authenticated:
@@ -141,6 +196,7 @@ def checkout(request):
         # get items attached to the order
         # query child object order item
         items = order.products.all()
+
     # if user is not authenticated
     else:
         items = []

@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['0.0.0.0']
 # Application definition
 
 INSTALLED_APPS = [
-    'crispy_forms',
+    
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'crispy_forms',
+    'django_countries',
 
 ]
 SITE_ID = 1
