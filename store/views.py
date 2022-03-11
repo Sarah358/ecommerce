@@ -32,6 +32,23 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'store/product_details.html'
 
+# cart function
+def cart(request):
+    # check if user is authenticated
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        # get an order if exists or create an order
+        order,created =  Order.objects.get_or_create(customer=customer,complete=False)
+        # get items attached to the order
+        items = order.products.all()
+    # if user is not authenticated
+    else:
+        items = []
+        order = {'get_cart_total':0,'get_cart_items':0}
+    
+    context = {'items':items,'order':order}
+    return render(request,'store/cart.html',context)
+
 
 # add products to cart
 def add_to_cart(request,slug):
@@ -61,7 +78,28 @@ def add_to_cart(request,slug):
         order.save()
         return redirect("cart")
 
-    return redirect("cart",)
+    return redirect("cart")
+
+# reduce quantity in the cart
+def reduce_cart_quantity(request,slug):
+    product = get_object_or_404(Product,slug=slug)
+    customer = request.user.customer
+    order_qs= Order.objects.filter(customer=customer,complete=False)
+    if order_qs.exists():
+        order = order_qs[0]
+        # check if order item is in order
+        if order.products.filter(product__slug=product.slug).exists():
+            orderitem = OrderItem.objects.filter(product=product,customer=customer,complete=False)[0]
+            if orderitem.quantity > 1:
+                orderitem.quantity -=1 
+                orderitem.save()
+                messages.info(request,f"{product.title} quantity was updated")
+                
+            else:
+                order.products.remove(orderitem)
+                order.save()
+                messages.info(request,f"{product.title} was removed from cart")
+            return redirect("cart")
 
 # remove products from cart
 def remove_from_cart(request,slug):
@@ -86,49 +124,13 @@ def remove_from_cart(request,slug):
         return redirect("product_details",slug=slug)
     return redirect("cart")
 
-# reduce quantity in the cart
-def reduce_cart_quantity(request,slug):
-    product = get_object_or_404(Product,slug=slug)
-    customer = request.user.customer
-    order_qs= Order.objects.filter(customer=customer,complete=False)
-    if order_qs.exists():
-        order = order_qs[0]
-        # check if order item is in order
-        if order.products.filter(product__slug=product.slug).exists():
-            orderitem = OrderItem.objects.filter(product=product,customer=customer,complete=False)[0]
-            if orderitem.quantity > 1:
-                orderitem.quantity -=1 
-                orderitem.save()
-                messages.info(request,f"{product.title} quantity was updated")
-                
-            else:
-                order.products.remove(orderitem)
-                order.save()
-                messages.info(request,f"{product.title} was removed from cart")
-            return redirect("cart")
 
-
-# cart function
-def cart(request):
-    # check if user is authenticated
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        # get an order if exists or create an order
-        order,created =  Order.objects.get_or_create(customer=customer,complete=False)
-        # get items attached to the order
-        items = order.products.all()
-    # if user is not authenticated
-    else:
-        items = []
-        order = {'get_cart_total':0,'get_cart_items':0}
-    
-    context = {'items':items,'order':order}
-    return render(request,'store/cart.html',context)
 
  # checkout class
 class CheckoutView(View):
     def get(self, *args, **kwargs):
         customer = self.request.user.customer
+        # address = Shippingaddress.objects.get(customer=customer,default=True)
         order = Order.objects.get(customer=customer, complete=False)
         # address = Address.objects.get(user=self.request.user, default=True)
         items = order.products.all()
@@ -145,17 +147,17 @@ class CheckoutView(View):
 
     def post(self, *args, **kwargs):
         customer = self.request.user.customer
-        order = Order.objects.get(customer=customer, complete=False)
+        order,created = Order.objects.get_or_create(customer=customer, complete=False)
         form = CheckoutForm(self.request.POST or None)
         if form.is_valid():
             # print(form.cleaned_data)
             address = form.cleaned_data.get('address')
             street = form.cleaned_data.get('street')
             city = form.cleaned_data.get('city')
-            country = form.cleaned_data.get('country')
+            # country = form.cleaned_data.get('country')
             save_info = form.cleaned_data.get('save_info')
             use_default = form.cleaned_data.get('use_default')
-            payment_option = form.cleaned_data.get('payment_option')
+            # payment_option = form.cleaned_data.get('payment_option')
 
             # create an instance of address model and save info
             address = Shippingaddress(
@@ -163,7 +165,7 @@ class CheckoutView(View):
                 address = address,
                 street = street,
                 city = city,
-                country = country,
+                # country = country,
                
             )
             address.save()
@@ -173,37 +175,56 @@ class CheckoutView(View):
                 
             order.address = address
             order.save()
-            
+
+            # make order complete
+            order_items = order.products.all()
+            order_items.update(complete=True)
+            for item in order_items:
+                item.product.inventory -= item.quantity
+                item.save()
+                item.product.save()
+            order.complete = True
+            order.save()
 
             
-            return redirect("checkout")
+
+
+            
+            # if use_default:
+            #     address = Shippingaddress.objects.get(
+            #         customer = self.request.user.customer, default=True)
+            #     order.address = address
+            #     order.save()   
+            messages.success(self.request, "Your order was successful!") 
+            return redirect("cart")
         else:
             print('The form is invalid')
 
-
-
-
+class PaymentView(View):
+    def get(self, *args, **kwargs):
+        return render(self.request,'store/payments.html')
     
 
-    
 
-def checkout(request):
-      # check if user is authenticated
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        # get an order if exists or create an order
-        order,created =  Order.objects.get_or_create(customer=customer,complete = False)
-        # get items attached to the order
-        # query child object order item
-        items = order.products.all()
 
-    # if user is not authenticated
-    else:
-        items = []
-        order = {'get_cart_total':0,'get_cart_items':0}
-    
-    context = {'items':items,'order':order}
-    return render(request,'store/checkout.html',context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # reduce inventory
@@ -237,24 +258,30 @@ def reduce_inventory(request,pk):
 
 
 
+
 # def index(request):
 #     product = Product.objects.all()
 #     customer = Customer.objects.all()
 #     return render (request,'store/main.html',{'products':list(product),'customers':list(customer)})
 
 
+# def checkout(request):
+#       # check if user is authenticated
+#     if request.user.is_authenticated:
+#         customer = request.user.customer
+#         # get an order if exists or create an order
+#         order,created =  Order.objects.get_or_create(customer=customer,complete = False)
+#         # get items attached to the order
+#         # query child object order item
+#         items = order.products.all()
 
-
-
-
-
-
-
-
-
-
-
-
+#     # if user is not authenticated
+#     else:
+#         items = []
+#         order = {'get_cart_total':0,'get_cart_items':0}
+    
+#     context = {'items':items,'order':order}
+#     return render(request,'store/checkout.html',context)
 
 
 

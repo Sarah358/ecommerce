@@ -35,13 +35,13 @@
           {{form|crispy}}
           <button type="submit" class="btn btn-info">Submit</button>
         </form>  {% endcomment %}
-        <div class="row">
-         
-            <div class="col-lg-6 col-12">
-                
-                <form action="#" method="POST">
-          {% csrf_token %}
-
+        
+        <div class="row">    
+            <div class="col-md-6">  
+             
+                <form action="#" method="POST" class ='row'>
+                   {% csrf_token %}
+                   
                     <div class="checkbox-form">
                         <div class="row">
                            
@@ -67,36 +67,22 @@
                                     <input placeholder="" type="text" name="city" id="city">
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="checkout-form-list">
-                                    <label>Country <span class="required">*</span></label>
-                                    {{form.country}}
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                              <div class="custom-control custom-radio">
-                                <input id="stripe" value="S" name="payment_option" type="radio" class="custom-control-input">
-                                <label class="custom-control-label" for="stripe">Stripe</label>
-                              </div>
-                              <div class="custom-control custom-radio">
-                                <input id="paypal" value="P" name="payment_option" type="radio" class="custom-control-input">
-                                <label class="custom-control-label" for="paypal">Paypal</label>
-                              </div>
-                            </div>
-                            <div class="order-button-payment col-md-6">
-                                <input value="Make payment" type="submit">
-                            </div>
-                            
-                        </div>
-                       
-                    </div>
-                </form>
+                           
+          
+             <div class="order-button-payment col-md-12">
+              <input value="Continue To Checkout" type="submit">
+          </div>  
+           
+            
+        </div>       
+                </div>
+            </form>
             </div>
-            <div class="col-lg-6 col-12">
+            <div class="col-md-6">
                 <div class="your-order">
                     <h3>Order Summary</h3>
                     <div class="your-order-table table-responsive">
-                        {% comment %} <table class="table">
+                         <table class="table">
                             <thead>
                                 <tr>
                                     <th class="cart-product-name">Product</th>
@@ -125,65 +111,30 @@
                                     <th>Order Total</th>
                                     <td><strong><span class="amount">{% load humanize %}KSH {{order.get_cart_total|floatformat:0|intcomma}}</span></strong></td>
                                 </tr>
+                               
                             </tfoot>
-                        </table> {% endcomment %}
+                        </table> 
                     </div>
-                    <div class="payment-method">
-                        <div class="payment-accordion">
-                            <div id="accordion">
-                              <div class="card">
-                                <div class="card-header" id="#payment-1">
-                                  <h5 class="panel-title">
-                                    <a class="" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                      Direct Bank Transfer.
-                                    </a>
-                                  </h5>
-                                </div>
-                                <div id="collapseOne" class="collapse show" data-parent="#accordion">
-                                  <div class="card-body">
-                                    <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="card">
-                                <div class="card-header" id="#payment-2">
-                                  <h5 class="panel-title">
-                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                      Cheque Payment
-                                    </a>
-                                  </h5>
-                                </div>
-                                <div id="collapseTwo" class="collapse" data-parent="#accordion">
-                                  <div class="card-body">
-                                    <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="card">
-                                <div class="card-header" id="#payment-3">
-                                  <h5 class="panel-title">
-                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                      PayPal
-                                    </a>
-                                  </h5>
-                                </div>
-                                <div id="collapseThree" class="collapse" data-parent="#accordion">
-                                  <div class="card-body">
-                                    <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="order-button-payment">
-                                <input value="Place order" type="submit">
-                            </div>
+                    <div class=" col-md-12">
+                        <div class="coupon-info">
+                            <form action="#">
+                                <p class="checkout-coupon float-center">
+                                    <input placeholder="Coupon code" type="text" class='p-3 ml-2'>
+                                    <input value="Apply Coupon" type="submit" class='btn btn-primary'>
+                                </p>
+                            </form>
                         </div>
-                    </div>
+                    </div>  
+
+            
                 </div>
             </div>
+             
+              
+             
+              
         </div>
     </div>
 </div>
 
-<!--Checkout Area End-->
 {% endblock content %}

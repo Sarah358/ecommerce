@@ -16,7 +16,7 @@ class AddressAdmin(admin.ModelAdmin):
         'street',
         'city',
         'default',
-        'country',
+        
     ]
 
 

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Payment{% endblock title %}
+{% block breadcrumblist %}
+<li><a href="{% url 'cart' %}">Shopping Cart</a></li>
+<li class="active">Payment</li>
+{% endblock breadcrumblist%}
+{% block content %}
+<h1>Payment</h1>
+{% endblock %}

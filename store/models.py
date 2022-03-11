@@ -123,13 +123,13 @@ class Shippingaddress(models.Model):
     address = models.CharField(max_length=255)
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
-    country = CountryField(multiple=False,null=True)
+    # country = CountryField(multiple=False,null=True)
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
     save_info = models.BooleanField(default=False)
     default = models.BooleanField(default=True)
     use_default = models.BooleanField(default=False)
-    payment_option = models.CharField(choices=PAYMENT_CHOICES, max_length=2)
+    # payment_option = models.CharField(choices=PAYMENT_CHOICES, max_length=2)
 
          # changing str rep
     def __str__(self) -> str:
@@ -147,6 +147,10 @@ class Order(models.Model):
         # changing str rep
     def __str__(self) -> str:
         return str(self.id)
+
+    # def placeOrder(self):
+    #     self.save()
+        
     # get cart total
     @property
     def get_cart_total(self):
@@ -160,15 +164,7 @@ class Order(models.Model):
         orderitems = self.products.all()
         total = sum([item.quantity for item in orderitems])
         return total
-
-
-
-
-
-
-
-
-    
+   
 
 class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
