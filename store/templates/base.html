@@ -77,67 +77,37 @@
             <div class="header-top">
                 <div class="container">
                     <div class="row">
-                        <!-- Begin Header Top Left Area -->
-                        <div class="col-lg-3 col-md-4">
-                            <div class="header-top-left">
-                                <ul class="phone-wrap">
-                                    <li><span>Telephone Enquiry:</span><a href="#">(+254)  799757242</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <!-- Header Top Left Area End Here -->
                         <!-- Begin Header Top Right Area -->
                         <div class="col-lg-9 col-md-8">
                             <div class="header-top-right">
                                 <ul class="ht-menu">
-                                    <!-- Begin Setting Area -->
-                                    <li>
-                                        <div class="ht-setting-trigger"><span>Setting</span></div>
-                                        <div class="setting ht-setting">
-                                            <ul class="ht-setting-list">
-                                                <li><a href="#">My Account</a></li>
-                                                <li><a href="#">Checkout</a></li>
-                                                <li><a href="{% url 'account_email' %}">Change Email</a></li>
-
-                                                
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <!-- Setting Area End Here -->
-                                    <!-- Begin Currency Area -->
-                                    <li>
-                                        <span class="currency-selector-wrapper">Currency :</span>
-                                        <div class="ht-currency-trigger"><span>KES</span></div>
-                                        <div class="currency ht-currency">
-                                            <ul class="ht-setting-list">
-                                                <li><a href="active">KES </a></li>
-                                                <li class="#"><a href="#">USD $</a></li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <!-- Currency Area End Here -->
-                                    <!-- Begin Language Area -->
-                                    <li>
-                                        <span class="language-selector-wrapper">Language :</span>
-                                        <div class="ht-language-trigger"><span>English</span></div>
-                                        <div class="language ht-language">
-                                            <ul class="ht-setting-list">
-                                                <li class="active"><a href="#"><img src="/static/images/menu/flag-icon/1.jpg" alt="">English</a></li>
-                                                <li><a href="#"><img src="/static/images/menu/flag-icon/2.jpg" alt="">Français</a></li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <!-- Language Area End Here -->
+                                        <!-- Begin Setting Area -->
+                                        <li>
+                                            <div class="ht-setting-trigger"><span>Setting</span></div>
+                                            <div class="setting ht-setting">
+                                                <ul class="ht-setting-list">
+                                                    <li><a href="{% url 'my_dashboard' %}">My Account</a></li>
+                                                    <li><a href="#">Checkout</a></li>
+                                                    <li><a href="{% url 'account_email' %}">Change Email</a></li>
+    
+                                                    
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <!-- Setting Area End Here -->
+                                   
+                            
                                     {% if request.user.is_authenticated %}
                                        
                                 <a href="{% url 'account_logout' %}">
-                                    <li class="hm-minicart">
+                                    <li class="float-right">
                                         
                                             {% comment %} <span class="item-icon"></span> {% endcomment %}
-                                <button class="btn btn-warning btn-md">Logout</button>
+                                <button class="btn btn-warning btn-md ">Logout</button>
                                         
                                         {% endif %}
                                     </li>
+                                   
                                 </a>
                                 </ul>
                             </div>
@@ -367,21 +337,21 @@
                       <div class="footer-logo">
                           <img src="/static/images/menu/logo/3.png" alt="Footer Logo">
                           <p class="info">
-                              We are a team of designers and developers that create high quality HTML Template & Woocommerce, Shopify Theme.
+                            
                           </p>
                       </div>
                       <ul class="des">
                           <li>
                               <span>Address: </span>
-                              6688Princess Road, London, Greater London BAS 23JK, UK
+                             Nairobi,Kenya
                           </li>
                           <li>
                               <span>Phone: </span>
-                              <a href="#">(+123) 123 321 345</a>
+                              <a href="#">(+254) 799757242</a>
                           </li>
                           <li>
                               <span>Email: </span>
-                              <a href="mailto://info@yourdomain.com">info@yourdomain.com</a>
+                              <a href="#">njerinjuguna358@gmail.com</a>
                           </li>
                       </ul>
                   </div>
@@ -507,9 +477,7 @@
                   </div>
                   <!-- Footer Payment Area End Here -->
                   <!-- Begin Copyright Area -->
-                  <div class="copyright text-center pt-25">
-                      <span><a target="_blank" href="https://www.templateshub.net">Templates Hub</a></span>
-                  </div>
+                  
                   <!-- Copyright Area End Here -->
               </div>
           </div>

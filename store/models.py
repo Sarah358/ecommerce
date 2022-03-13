@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.forms import ModelForm
 from django.shortcuts import reverse
+from django.conf import settings
 
 
 # Create your models here.
@@ -76,31 +77,12 @@ class Updateinventory(ModelForm):
         fields = ['inventory']
 
 
-# customers model
-class Customer(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE,null=True,blank=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email=models.EmailField(unique=True)
-    phone = models.CharField(max_length=255)
-    birth_date = models.DateField(null=True)
-   
-
-     # changing str rep
-    def __str__(self) -> str:
-        return f'{self.first_name} {self.last_name}'
-    
-    # sort collection
-    class Meta:
-        ordering = ['first_name','last_name']
-
-
-
-
 # orderitem
 class OrderItem(models.Model):
     # order = models.ForeignKey(Order,on_delete=models.PROTECT)
-    customer = models.ForeignKey(Customer,on_delete=models.CASCADE,null=True,blank=True)
+    # customer = models.ForeignKey(Customer,on_delete=models.CASCADE,null=True,blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE,null=True,blank=True)
     product = models.ForeignKey(Product,on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField(default=1)
     complete = models.BooleanField(max_length=1,default=False,null=True)
@@ -124,7 +106,9 @@ class Shippingaddress(models.Model):
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     # country = CountryField(multiple=False,null=True)
-    customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+    # customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE,null=True,blank=True)  
     date_added = models.DateTimeField(auto_now_add=True)
     save_info = models.BooleanField(default=False)
     default = models.BooleanField(default=True)
@@ -138,7 +122,10 @@ class Shippingaddress(models.Model):
 class Order(models.Model):
     placed_at = models.DateField(auto_now_add=True,null=True)
     complete = models.BooleanField(max_length=1,default=False,null=True)
-    customer = models.ForeignKey(Customer,on_delete=models.PROTECT,null=True,default='sarah')
+    status = models.BooleanField(max_length=1,default=False,null=True)
+    # customer = models.ForeignKey(Customer,on_delete=models.PROTECT,null=True,default='sarah')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE,null=True,blank=True)
     products = models.ManyToManyField(OrderItem)
     address = models.ForeignKey(Shippingaddress,on_delete=models.SET_NULL,blank=True,null=True)
 
@@ -165,19 +152,3 @@ class Order(models.Model):
         total = sum([item.quantity for item in orderitems])
         return total
    
-
-class Cart(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-
-          # changing str rep
-    def __str__(self) -> str:
-        return self.id
-
-class CartItem(models.Model):
-    cart = models.ForeignKey(Cart,on_delete=models.CASCADE)
-    product=models.ForeignKey(Product,on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField()
-
-          # changing str rep
-    def __str__(self) -> str:
-        return self.id

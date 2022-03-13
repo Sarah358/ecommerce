@@ -1,5 +1,6 @@
 from ctypes import addressof
 from pipes import Template
+from unicodedata import category
 from django.views.generic import ListView,DetailView,TemplateView,View
 from django.shortcuts import redirect, render ,get_object_or_404
 from .models import *
@@ -9,20 +10,25 @@ import json
 from django.contrib import messages
 from django.utils import timezone
 from .forms import CheckoutForm
+from django.contrib.auth.decorators import login_required
+from django.db.models.functions import ExtractMonth
+from django.db.models import Count
 
 
 
 
-# Create your views here.
-# login
-def login(request):
-    return render(request,'store/login.html')
-
-# register
-def register(request):
-    return render(request,'store/register.html')
-    
+# Create your views here.   
 # landing page
+
+def index(request):
+    product = Product.objects.all()
+    collection=Collection.objects.all().order_by('-id')
+    context = {'products':list(product),
+    'collection':collection,
+    
+    }
+    return render (request,'store/index.html',context)
+
 class Homeview(ListView):
     model = Product
     template_name = 'store/index.html'
@@ -32,13 +38,22 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'store/product_details.html'
 
+# Product List According to Collection
+def collection_product_list(request,col_id):
+	collection=Collection.objects.get(id=col_id)
+	data=Product.objects.filter(collection=collection).order_by('-id')
+	return render(request,'store/collection_product_list.html',{
+			'data':data,
+			})
+
+
+
 # cart function
 def cart(request):
     # check if user is authenticated
     if request.user.is_authenticated:
-        customer = request.user.customer
         # get an order if exists or create an order
-        order,created =  Order.objects.get_or_create(customer=customer,complete=False)
+        order,created =  Order.objects.get_or_create(user=request.user,complete=False)
         # get items attached to the order
         items = order.products.all()
     # if user is not authenticated
@@ -51,11 +66,11 @@ def cart(request):
 
 
 # add products to cart
+@login_required
 def add_to_cart(request,slug):
     product = get_object_or_404(Product,slug=slug)
-    customer = request.user.customer
-    orderitem,created = OrderItem.objects.get_or_create(product=product,customer=customer,complete=False)
-    order_qs= Order.objects.filter(customer=customer,complete=False)
+    orderitem,created = OrderItem.objects.get_or_create(product=product,user=request.user,complete=False)
+    order_qs= Order.objects.filter(user=request.user,complete=False)
     if order_qs.exists():
         order = order_qs[0]
         # check if order item is in order
@@ -73,7 +88,7 @@ def add_to_cart(request,slug):
             
     else:
         placed_at = timezone.now()
-        order = Order.objects.create(customer=customer,complete=False,placed_at = placed_at)
+        order = Order.objects.create(user=request.user,complete=False,placed_at = placed_at)
         order.products.add(orderitem)
         order.save()
         return redirect("cart")
@@ -81,15 +96,15 @@ def add_to_cart(request,slug):
     return redirect("cart")
 
 # reduce quantity in the cart
+@login_required
 def reduce_cart_quantity(request,slug):
     product = get_object_or_404(Product,slug=slug)
-    customer = request.user.customer
-    order_qs= Order.objects.filter(customer=customer,complete=False)
+    order_qs= Order.objects.filter(user=request.user,complete=False)
     if order_qs.exists():
         order = order_qs[0]
         # check if order item is in order
         if order.products.filter(product__slug=product.slug).exists():
-            orderitem = OrderItem.objects.filter(product=product,customer=customer,complete=False)[0]
+            orderitem = OrderItem.objects.filter(product=product,user=request.user,complete=False)[0]
             if orderitem.quantity > 1:
                 orderitem.quantity -=1 
                 orderitem.save()
@@ -102,15 +117,15 @@ def reduce_cart_quantity(request,slug):
             return redirect("cart")
 
 # remove products from cart
+@login_required
 def remove_from_cart(request,slug):
     product = get_object_or_404(Product,slug=slug)
-    customer = request.user.customer
-    order_qs= Order.objects.filter(customer=customer,complete=False)
+    order_qs= Order.objects.filter(user=request.user,complete=False)
     if order_qs.exists():
         order = order_qs[0]
         # check if order item is in order
         if order.products.filter(product__slug=product.slug).exists():
-            orderitem = OrderItem.objects.filter(product=product,customer=customer,complete=False)[0]
+            orderitem = OrderItem.objects.filter(product=product,user=request.user,complete=False)[0]
             order.products.remove(orderitem)
             order.save()  
             messages.info(request,f"{product.title} was removed from cart")
@@ -129,9 +144,8 @@ def remove_from_cart(request,slug):
  # checkout class
 class CheckoutView(View):
     def get(self, *args, **kwargs):
-        customer = self.request.user.customer
         # address = Shippingaddress.objects.get(customer=customer,default=True)
-        order = Order.objects.get(customer=customer, complete=False)
+        order = Order.objects.get(user= self.request.user, complete=False)
         # address = Address.objects.get(user=self.request.user, default=True)
         items = order.products.all()
         form = CheckoutForm()
@@ -146,8 +160,7 @@ class CheckoutView(View):
         return render(self.request, 'store/checkout.html', context)
 
     def post(self, *args, **kwargs):
-        customer = self.request.user.customer
-        order,created = Order.objects.get_or_create(customer=customer, complete=False)
+        order,created = Order.objects.get_or_create(user= self.request.user, complete=False)
         form = CheckoutForm(self.request.POST or None)
         if form.is_valid():
             # print(form.cleaned_data)
@@ -161,7 +174,7 @@ class CheckoutView(View):
 
             # create an instance of address model and save info
             address = Shippingaddress(
-                customer = self.request.user.customer,
+                user= self.request.user,
                 address = address,
                 street = street,
                 city = city,
@@ -196,14 +209,31 @@ class CheckoutView(View):
             #     order.address = address
             #     order.save()   
             messages.success(self.request, "Your order was successful!") 
-            return redirect("cart")
+            return redirect("my_orders")
         else:
             print('The form is invalid')
 
-class PaymentView(View):
-    def get(self, *args, **kwargs):
-        return render(self.request,'store/payments.html')
+# User Dashboard
+import calendar
+def my_dashboard(request):
+	orders=Order.objects.annotate(month=ExtractMonth('placed_at')).values('month').annotate(count=Count('id')).values('month','count')
+	monthNumber=[]
+	totalOrders=[]
+	for d in orders:
+		monthNumber.append(calendar.month_name[d['month']])
+		totalOrders.append(d['count'])
+	return render(request, 'store/dashboard.html')
     
+# My Orders
+def my_orders(request):
+	orders=Order.objects.filter(user=request.user,complete=True).order_by('-id')
+	return render(request, 'store/orders.html',{'orders':orders})
+
+# Order Detail
+def my_order_items(request,id):
+	order=Order.objects.get(pk=id)
+	orderitems=OrderItem.objects.filter(order=order).order_by('-id')
+	return render(request, 'store/order-items.html',{'orderitems':orderitems})
 
 
 
@@ -259,10 +289,6 @@ def reduce_inventory(request,pk):
 
 
 
-# def index(request):
-#     product = Product.objects.all()
-#     customer = Customer.objects.all()
-#     return render (request,'store/main.html',{'products':list(product),'customers':list(customer)})
 
 
 # def checkout(request):

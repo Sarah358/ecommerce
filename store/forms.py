@@ -3,6 +3,7 @@ from django_countries.widgets import CountrySelectWidget
 from django_countries.fields import CountryField
 
 
+
 PAYMENT_CHOICES = (
     ('S', 'Stripe'),
     ('P', 'Paypal'),
@@ -19,3 +20,5 @@ class CheckoutForm(forms.Form):
     use_default = forms.BooleanField(required=False)
     # payment_option = forms.ChoiceField(
     #     widget=forms.RadioSelect(), choices=PAYMENT_CHOICES)
+
+
