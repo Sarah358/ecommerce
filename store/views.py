@@ -142,6 +142,7 @@ def remove_from_cart(request,slug):
 
 
  # checkout class
+
 class CheckoutView(View):
     def get(self, *args, **kwargs):
         # address = Shippingaddress.objects.get(customer=customer,default=True)
@@ -215,6 +216,7 @@ class CheckoutView(View):
 
 # User Dashboard
 import calendar
+@login_required
 def my_dashboard(request):
 	orders=Order.objects.annotate(month=ExtractMonth('placed_at')).values('month').annotate(count=Count('id')).values('month','count')
 	monthNumber=[]
@@ -225,11 +227,13 @@ def my_dashboard(request):
 	return render(request, 'store/dashboard.html')
     
 # My Orders
+@login_required
 def my_orders(request):
 	orders=Order.objects.filter(user=request.user,complete=True).order_by('-id')
 	return render(request, 'store/orders.html',{'orders':orders})
 
 # Order Detail
+@login_required
 def my_order_items(request,id):
 	order=Order.objects.get(pk=id)
 	orderitems=OrderItem.objects.filter(order=order).order_by('-id')
