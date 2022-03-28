@@ -13,6 +13,7 @@ from .forms import CheckoutForm
 from django.contrib.auth.decorators import login_required
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
+from django.core.paginator import Paginator
 
 
 
@@ -23,8 +24,9 @@ from django.db.models import Count
 def index(request):
     product = Product.objects.all()
     collection=Collection.objects.all().order_by('-id')
-    context = {'products':list(product),
+    context = {'products':product,
     'collection':collection,
+    
     
     }
     return render (request,'store/index.html',context)
@@ -37,6 +39,28 @@ class Homeview(ListView):
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'store/product_details.html'
+
+def shop(request):
+    product = Product.objects.all()
+    collection=Collection.objects.all().order_by('-id')
+    paginator = Paginator(product, 5)
+    page_number = request.GET.get('page')
+    page_obj = Paginator.get_page(paginator, page_number)
+    context = {'products':product,
+    'collection':collection, 
+    'page_obj': page_obj,   
+    }
+    return render (request,'store/shop.html',context)
+
+def contact(request):
+    return render(request,'store/contact.html')
+
+def about(request):
+    return render(request,'store/about.html')
+
+def faq(request):
+    return render(request,'store/faq.html')
+
 
 # Product List According to Collection
 def collection_product_list(request,col_id):

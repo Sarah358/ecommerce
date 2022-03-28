@@ -136,7 +136,7 @@
                             <form action="#" class="hm-searchbox">
                                 <select class="nice-select select-search-category">
                                     <option value="0">All</option>                         
-                                    <option value="10">Laptops</option>                     
+                                    <option value="10">Phones</option>                     
                                 </select>
                                 <input type="text" placeholder="Enter your search key ...">
                                 <button class="li-btn" type="submit"><i class="fa fa-search"></i></button>
@@ -156,7 +156,7 @@
                                     <li class="hm-minicart">
                                         <a href=" {% url 'cart' %} " class="hm-minicart-icon"style = "background: #d83737;">
                                             <span class="item-icon"></span>
-                                            <span class="cart-item-count wishlist-item-count">{{order.get_cart_items}}</span>
+                                            <span class="cart-item-count wishlist-item-count">{{request.user|cart_items_count}}</span>
                                         </a>
                                     </li>
                                 </a>
@@ -196,16 +196,17 @@
                                     <ul>
                                         <li ><a href="{% url 'template' %}">Home</a>
                                         </li>
-                                        <li><a href="#">Shop</a>
+                                        <li><a href="{% url 'shop' %}">Shop</a>
         
                                         </li>
-                                        <li><a href="#">Blog</a>
 
                                         </li>
-                                    >
+                                        <li><a href="{% url 'about' %}">About Us</a></li>
+                                        <li><a href="{% url 'contact' %}">Contact</a></li>
+                                        <li><a href="{% url 'faq' %}">FAQ's</a>
+
                                         </li>
-                                        <li><a href="#">About Us</a></li>
-                                        <li><a href="#">Contact</a></li>
+                                        
                                         <!-- Begin Header Bottom Menu Information Area -->
                                         <li class="hb-info f-right p-0 d-sm-none d-lg-block">
                                             <span>Nairobi, Kenya</span>
@@ -547,7 +548,7 @@
                                   </ul>
                               </div>
                               <div class="price-box pt-20">
-                                  <span class="new-price new-price-2">$57.98</span>
+                                  <span class="new-price new-price-2">5,798</span>
                               </div>
                               <div class="product-desc">
                                   <p>
